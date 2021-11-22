@@ -1,5 +1,13 @@
 import datetime
 
+def cal_time(func):
+    def wrapper(*args, **kwargs):
+        t1 = time.time()
+        result = func(*args, **kwargs)
+        t2 = time.time()
+        print("%s running time: %s secs." % (func.__name__, t2 - t1))
+        return result
+    return wrapper
 
 # 1.顺序查找
 def sercher_sequence(alist, item):
@@ -81,6 +89,7 @@ def insert_sort(alist):
             j -= 1
         alist[j + 1] = tmp
     return alist
+1 5 2 3 9 8 7
 
 
 # 6.快速排序
@@ -126,7 +135,38 @@ def merge_sort(array):
             res.append(right[j])
             j += 1
     return res + left[i:] + right[j:]
+	
+# 2
+def merge(li, low, mid, high):
+    i = low
+    j = mid + 1
+    ltmp = []
+    while i <= mid and j <= high:
+        if li[i] < li[j]:
+            ltmp.append(li[i])
+            i += 1
+        else:
+            ltmp.append(li[j])
+            j += 1
+    while i <= mid:
+        ltmp.append(li[i])
+        i += 1
+    while j <= high:
+        ltmp.append(li[j])
+        j += 1
+    li[low:high+1] = ltmp
 
+
+def _mergesort(li, low, high):
+    if low < high:
+        mid = (low + high) // 2
+        _mergesort(li,low, mid)
+        _mergesort(li, mid+1, high)
+        merge(li, low, mid, high)
+
+@cal_time
+def mergesort(li):
+    _mergesort(li, 0, len(li) - 1)
 
 if __name__ == '__main__':
     print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))

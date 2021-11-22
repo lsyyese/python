@@ -190,8 +190,7 @@ def data_check(n):
 
 if __name__ == '__main__':
     t = ThreadPoolExecutor(PROCE_NUM)
-    threadLock = Lock()
-    # 并发执行sql
+
     for i in range(NUM):
         obj = t.submit(data_check, i)
 
