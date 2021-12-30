@@ -1,5 +1,6 @@
 import datetime
 
+
 def cal_time(func):
     def wrapper(*args, **kwargs):
         t1 = time.time()
@@ -7,7 +8,9 @@ def cal_time(func):
         t2 = time.time()
         print("%s running time: %s secs." % (func.__name__, t2 - t1))
         return result
+
     return wrapper
+
 
 # 1.顺序查找
 def sercher_sequence(alist, item):
@@ -55,6 +58,8 @@ def sercher_dichotomy(alist, item):
 def bubble_sort(alist):
     for i in range(0, len(alist) - 1):
         for j in range(0, len(alist) - i - 1):
+            print(i)
+            print(j)
             if alist[j] > alist[j + 1]:
                 alist[j], alist[j + 1] = alist[j + 1], alist[j]
     return alist
@@ -89,7 +94,6 @@ def insert_sort(alist):
             j -= 1
         alist[j + 1] = tmp
     return alist
-1 5 2 3 9 8 7
 
 
 # 6.快速排序
@@ -99,6 +103,7 @@ def insert_sort(alist):
 """
 
 
+# 1
 def quick_sort(alist):
     if len(alist) <= 1:
         return alist
@@ -114,11 +119,40 @@ def quick_sort(alist):
     return quick_sort(left) + [mid_value] + quick_sort(right)
 
 
+# 2
+def quick_sort1(alist):
+    quick_sort2(alist, 0, len(alist) - 1)
+    return alist
+
+
+def quick_sort2(alist, lift, right):
+    if right > lift:
+        mid = quick_sort3(alist, lift, right)
+        quick_sort2(alist, lift, mid - 1)
+        quick_sort2(alist, mid + 1, right)
+
+
+def quick_sort3(alist, lift, right):
+    tmp = alist[lift]
+    while True:
+        while right > lift and alist[right] >= tmp:
+            right = right - 1
+        alist[lift] = alist[right]
+        while right > lift and alist[lift] <= tmp:
+            lift = lift + 1
+        alist[right] = alist[lift]
+        if right == lift:
+            break
+    alist[lift] = tmp
+    return lift
+
+
 # 7.归并排序
 """归并排序主要通过先递归地将数组分为两个部分，排序后，再将元素合并到一起。
 所以归根结底归并排序就是两部分组成：拆分+合并！"""
 
 
+#
 def merge_sort(array):
     if len(array) < 2:
         return array
@@ -135,7 +169,8 @@ def merge_sort(array):
             res.append(right[j])
             j += 1
     return res + left[i:] + right[j:]
-	
+
+
 # 2
 def merge(li, low, mid, high):
     i = low
@@ -154,24 +189,321 @@ def merge(li, low, mid, high):
     while j <= high:
         ltmp.append(li[j])
         j += 1
-    li[low:high+1] = ltmp
+    li[low:high + 1] = ltmp
 
 
 def _mergesort(li, low, high):
     if low < high:
         mid = (low + high) // 2
-        _mergesort(li,low, mid)
-        _mergesort(li, mid+1, high)
+        _mergesort(li, low, mid)
+        _mergesort(li, mid + 1, high)
         merge(li, low, mid, high)
+
 
 @cal_time
 def mergesort(li):
     _mergesort(li, 0, len(li) - 1)
 
+
+# 现在有一个列表，列表中的数范围都在0到100之间，列表长度大约为100万。设计算法在O(n)时间复杂度内将列表进行排序
+def sort_for_100(alist):
+    blist = [[] for none in range(0, 100)]
+    resultlist = []
+    for i in alist:
+        blist[i].append(i)
+    for j in blist:
+        for k in j:
+            resultlist.append(k)
+    return resultlist
+
+
+# 现在有n个数（n>10000），设计算法，按大小顺序得到前10大的数
+def sort_for_10000(alist):
+    blist = [0 for i in range(0, 11)]
+    for i in alist:
+        blist[10] = i
+        for j in range(0, len(blist) - 1):
+            for k in range(0, len(blist) - j - 1):
+                if blist[k] < blist[k + 1]:
+                    blist[k], blist[k + 1] = blist[k + 1], blist[k]
+    return blist[:10]
+
+
+# 回文
+def huiwen(a):
+    a = list(a)
+    leng = len(a)
+    tag = True
+    for i in range(leng):
+        if a[i] != a[leng - 1 - i]:
+            tag = False
+        if i == leng - i:
+            break
+    return tag
+
+
+# 递归
+def dihui(n):
+    if n == 0:
+        return 0
+    else:
+        return n + dihui(n - 1)
+
+
+# 将整数转换为任意二进制的字符串
+def tostr(n, base):
+    thestr = '0123456789abcdef'
+    if n < base:
+        return thestr[n]
+    else:
+        return tostr(n // base, base) + thestr[n % base]
+
+
+# 处理大文件
+def get_lines():
+    with open('1.txt', 'r') as f:
+        while True:
+            data = f.readline().strip('\n')
+            if not data:
+                break
+            yield data
+
+
 if __name__ == '__main__':
-    print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))
-    print(sercher_dichotomy([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10))
-    print(bubble_sort([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-    print(select_sort([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-    print(insert_sort([1, 7, 3, 4, 5, 6, 0, 8, 9, 10]))
-    print(quick_sort([1, 2, 3, 4, 7, 6, 0, 8, 9, 10]))
+    for e in get_lines():
+        print(e)  # 处理每一行数据
+
+
+# 将字符串 "k:1 |k1:2|k2:3|k3:4"，处理成字典 {k:1,k1:2,...}
+def str2dict(str):
+    dict = {}
+    item1 = str.split('|')
+    for i in item1:
+        k, v = i.split(':')
+        dict[k] = int(v)
+    print(dict)
+
+
+# 请按alist中元素的age由大到小排序
+alist = [{'name': 'a', 'age': 20}, {'name': 'b', 'age': 30}, {'name': 'c', 'age': 25}]
+
+
+def sortbyage(alist):
+    return sorted(alist, key=lambda x: x['age'], reverse=True)
+
+
+# 统计一个文本中单词频次最高的10个单词
+def find1():
+    d = {}
+    with open('1.txt', 'r') as f:
+        data = f.readlines()
+        for i in data:
+            word = i.split()
+            for j in word:
+                if not d.get(j):
+                    d[j] = 1
+                else:
+                    d[j] = d[j] + 1
+    d = sorted(d.items(), key=lambda x: x[1], reverse=True)
+    return d
+
+
+# 统计一段字符串中字符出现的次数,并倒序排列
+def count_str(str):
+    d = {}
+    for char in str:
+        d[char] = d.get(char, 0) + 1
+    return sorted(d.items(), key=lambda x: x[1], reverse=True)
+
+
+# 给定两个列表，怎么找出他们相同的元素和不同的元素
+list1 = [1, 2, 3]
+list2 = [3, 4, 5]
+set1 = set(list1)
+set2 = set(list2)
+print(set1 & set2)
+print(set1 ^ set2)
+
+
+# 反转一个整数，例如-123 --> -321
+def reverseint(x):
+    str1 = str(x)
+    if str1[0] == '-':
+        str2 = str1[1:][::-1]
+        int1 = - int(str2)
+    else:
+        str2 = str1[::-1]
+        int1 = int(str2)
+    return int1
+
+
+# 列表解析
+a = [1, 2, 3, 4, 5, 6, 7, 8]
+b = [i for i in a if i > 5]
+
+
+# 字符串 "-123" 转换成 -123 ，不使用内置api，例如 int()
+def atoi(s):
+    num = 0
+    tag = False
+    for v in s:
+        if v == '-':
+            tag = True
+            continue
+        for j in range(10):
+            if v == str(j):
+                num = num * 10 + j
+    if tag:
+        return -num
+    else:
+        return num
+
+
+# 两数之和
+def twoSum(nums, target):
+    d = {}
+    size = 0
+    while size < len(nums):
+        if target - nums[size] in d:
+            return [d[target - nums[size]], size]
+        else:
+            d[nums[size]] = size
+            size = size + 1
+    return []
+
+
+# 合并两个有序列表
+def merge_list(list1, list2):
+    tmp = []
+    i = j = 0
+    while i < len(list1) and j < len(list2):
+        if list1[i] < list2[j]:
+            tmp.append(list1[i])
+            i = i + 1
+        else:
+            tmp.append(list2[j])
+            j = j + 1
+    return tmp + list1[i:] + list2[j:]
+
+
+# 一句话解决阶乘函数
+from functools import reduce
+
+
+def fun1(n):
+    return reduce(lambda x, y: x * y, range(1, n + 1))
+
+
+# 匹配ip
+import re
+
+re.match(r"^([0-9]{1,3}\.){3}[0-9]{1,3}$", "272.168,1,1")
+
+
+# 数组中出现次数超过一半的数字
+def majorityElement(alist):
+    d = {}
+    for i in alist:
+        d[i] = d.get(i, 0) + 1
+        if d[i] > len(alist) / 2:
+            return i
+
+
+# 求100以内的质数
+num = [];
+i = 2
+for i in range(2, 100):
+    j = 2
+    for j in range(2, i):
+        if (i % j == 0):
+            break
+    else:
+        num.append(i)
+print(num)
+
+# 斐波那契数列
+def fibonacci(n):
+    if n == 0 or n == 1:
+        return 1
+        return fibonacci(n - 1) + fibonacci(n - 2)
+
+# 反转链表
+class ListNode:
+    def __init__(self, x):
+        self.val = x
+        self.next = None
+
+class Solution:
+    def reverseList(self, head: ListNode) -> ListNode:
+        cur, pre = head, None
+        while cur:
+            tmp = cur.next  # 暂存后继节点 cur.next
+            cur.next = pre  # 修改 next 引用指向
+            pre = cur       # pre 暂存 cur
+            cur = tmp       # cur 访问下一节点
+        return pre
+link = Node(1,Node(2,Node(3,Node(4,Node(5,Node(6,Node7,Node(8.Node(9))))))))
+root = reverseList(link)
+while root: 
+    print(roo.data)
+    root = root.next
+
+# 青蛙跳台阶问题
+class Solution:
+    def climbStairs(self,n):
+        if n == 1:
+            return 1
+        if n == 2:
+            return 2
+        return self.climbStairs(n-1) + self.climbStairs(n-2)
+
+
+# 字符串相加 返回字符串
+class Solution:
+    def addStrings(self, num1: str, num2: str) -> str:
+        num1_int = 0
+        num2_int = 0
+        for i in num1:
+            num1_int = num1_int * 10 + ord(i)-ord('0')
+        for j in num2:
+            num2_int = num2_int * 10 + ord(j)-ord('0')
+        num_int = num1_int + num2_int
+        return str(num_int)
+
+# 用两个栈 实现一个队列 list模拟栈
+class MyQueue:
+    def __init__(self):
+        self.a = []
+        self.b = []
+
+    def push(self, x: int) -> None:
+        while self.b:
+            self.a.append(self.b.pop())
+        self.a.append(x)
+        while self.a:
+            self.b.append(self.a.pop())
+
+    def pop(self) -> int:
+        return self.b.pop()
+
+    def peek(self) -> int:
+        return self.b[-1]
+
+
+    def empty(self) -> bool:
+        return len(self.b) == 0
+
+if __name__ == '__main__':
+    # print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))
+    # print(sercher_dichotomy([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10))
+    # print(bubble_sort([1, 7, 3, 4, 5, 6, 0, 8, 9, 10]))
+    # print(select_sort([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+    # print(insert_sort([1, 7, 3, 4, 5, 6, 0, 8, 9, 10]))
+    # print(quick_sort([1, 2, 3, 4, 7, 6, 0, 8, 9, 10]))
+    # print(
+    #   sort_for_100([1, 7, 3, 4, 5, 3, 7, 2, 3, 4, 5, 6, 7, 8, 9, 8, 66, 55, 44, 33, 23, 43, 55, 76, 76, 0, 8, 9, 10]))
+    #print(sort_for_10000([1, 2, 3, 4, 7, 6, 0, 8, 9, 10]))
+    # e = [1,3,4,5]
+    # e.pop(2)
+    # print(e)
+    pass
