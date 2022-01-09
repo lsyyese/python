@@ -50,11 +50,9 @@ grep  -E '^([0-9]{3}-|\([0-9]{3}\) )[0-9]{3}-[0-9]{4}$' file.txt
 cat words.txt |awk '{for(i=1;i<=NF;i++){a[$i]=a[$i]+1}}END{for(v in a){print v ,a[v] |"sort -k2 -nr"}}'
 cat words.txt |awk '{for(i=1;i<=NF;i++){a[$i]=a[$i]+1}}END{for(v in a){print v ,a[v]}}'|sort -k2 -nr
 cat Words.txt| tr -s ' ' '\n' | sort | uniq -c | sort -r | awk '{print $2, $1}'
-cat words.txt | xargs -n 1 | sort | uniq -c | sort -nr | awk '{print $2" "$1}
+cat words.txt | xargs -n 1 | sort | uniq -c | sort -nr | awk '{print $2" "$1}'
 
 5、grep
-
-
 
 6、find
 find . -type d -o -type f -size +4k -mtime +10
