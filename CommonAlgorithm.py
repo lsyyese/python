@@ -46,6 +46,19 @@ def sercher_dichotomy(alist, item):
             left = mid_index + 1
     return find
 
+# 递归实现
+def binarysearch(alist, item):
+    if len(alist) == 0:
+        return False
+    else:
+        mid = len(alist) // 2
+        if alist[mid] == item:
+            return True
+        else:
+            if alist[mid] > item:
+                return binarysearch(alist[:mid], item)
+            else:
+                return binarysearch(alist[mid + 1:], item)
 
 # 3.冒泡排序
 
@@ -427,12 +440,12 @@ def fibonacci(n):
         return 1
         return fibonacci(n - 1) + fibonacci(n - 2)
 
-# 反转链表
+
 class ListNode:
     def __init__(self, x):
         self.val = x
         self.next = None
-
+# 反转链表
 class Solution:
     def reverseList(self, head: ListNode) -> ListNode:
         cur, pre = head, None
@@ -447,6 +460,23 @@ root = reverseList(link)
 while root: 
     print(roo.data)
     root = root.next
+
+# 合并两个有序链表
+class Solution:
+    def mergtowlist(self, l1, l2):
+        res = ListNode(0)
+        if l1 is None:
+            return l2
+        if l2 is None:
+            return l1
+        if l1.var < l2.var:
+            res = l1.var
+            res.next = mergtowlist(l1.next, l2)
+        if l1.var > l2.var:
+            res = l2.var
+            res.next = mergtowlist(l2.next, l1)
+        return res
+
 
 # 青蛙跳台阶问题
 class Solution:
@@ -470,6 +500,44 @@ class Solution:
         num_int = num1_int + num2_int
         return str(num_int)
 
+# 用列表实现栈
+class Stack():
+    def __init__(self):
+        self.items = []
+
+    def push(self, x):
+        self.items.append(x)
+
+    def pop(self):
+        self.items.pop()
+
+    def isEmpty(self):
+        return self.items == []
+
+    def peek(self):
+        return self.items[len(self.items) - 1]
+
+    def size(self):
+        return len(self.items)
+
+# python列表实现队列
+class Queue:
+    def __init__(self):
+        self.items = []
+
+    def enqueue(self, x):
+        self.items.insert(0, x)
+
+    def dequeue(self):
+        return self.items.pop()
+
+    def isEmpty(self):
+        return self.items == []
+
+    def size(self):
+        return len(self.items)
+
+
 # 用两个栈 实现一个队列 list模拟栈
 class MyQueue:
     def __init__(self):
@@ -492,6 +560,144 @@ class MyQueue:
 
     def empty(self) -> bool:
         return len(self.b) == 0
+
+# 括号匹配问题
+def check_kuohao(s):
+    stack = []
+    for char in s:
+        if char in {'(', '[', '{'}:
+            stack.append(char)
+        elif char == ')':
+            if len(stack) > 0 and stack[-1] == '(':
+                stack.pop()
+            else:
+                return False
+        elif char == ']':
+            if len(stack) > 0 and stack[-1] == '[':
+                stack.pop()
+            else:
+                return False
+        elif char == '}':
+            if len(stack) > 0 and stack[-1] == '{':
+                stack.pop()
+            else:
+                return False
+    if len(stack) == 0:
+        return True
+    else:
+        return False
+# python 实现链表
+class Node:
+    def __init__(self, initdata):
+        self.data = initdata
+        self.next = None
+
+    def getData(self):
+        return self.data
+
+    def getNext(self):
+        return self.next
+
+    def setData(self, newdata):
+        self.data = newdata
+
+    def setNext(self, newnext):
+        self.next = newnext
+
+# python 实现链表
+class UnorderList:
+    def __init__(self):
+        self.head = None
+
+    def isEmpty(self):
+        return None == self.head
+
+    def add(self, item):
+        temp = Node(item)
+        temp.setNext(self.head)
+        self.head = temp
+
+    def length(self):
+        current = self.head
+        count = 0
+        while None != current:
+            count = count + 1
+            current = current.getNext()
+        return count
+
+    def search(self, x):
+        current = self.head
+        found = False
+        while None != current and not found:
+            if current.getData() == x:
+                found = True
+            else:
+                current = current.getNext
+        return found
+
+    def remove(self, x):
+        current = self.head
+        previous = None  # 当前节点的上一个节点
+        found = False
+        while not found:
+            if current.getData == x:
+                found = True
+            else:
+                previous = current
+                current = current.getNext
+        if None == previous:
+            self.head = current.getNext
+        else:
+            previous.setNext(current.getNext)
+
+# python 实现树
+class BinaryTree:
+    def __init__(self, rootObj):
+        self.key = rootObj
+        self.leftChild = None
+        self.rightChild = None
+
+    def insertLeft(self, newnNode):
+        if self.leftChild == None:
+            self.leftChild = BinaryTree(newnNode)
+        else:
+            t = BinaryTree(newnNode)
+            t.leftChild = self.leftChild
+            self.leftChild = t
+
+    def insertRight(self, newNode):
+        if self.rightChild == None:
+            self.rightChild = BinaryTree(newNode)
+        else:
+            t = BinaryTree(newNode)
+            t.rightChild = self.rightChild
+            self.rightChild = t
+
+    def getRightChild(self):
+        return self.rightChild
+
+    def getLeftChild(self):
+        return self.leftChild
+
+    def setRootval(self, obj):
+        self.key = obj
+
+    def getRootval(self):
+        return self.key
+    # 内置前序遍历
+    def preorder(self):
+        print(self.key)
+        if self.leftChild:
+            self.leftChild.preorder()
+        if self.rightChild:
+            self.rightChild.preorder()
+
+# 外置前序遍历
+def preorder(tree):
+    if tree:
+        print(tree.getRootval)
+        preorder(tree.getLeftChild())
+        preorder(tree.getRightChild())
 
 if __name__ == '__main__':
     # print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))
