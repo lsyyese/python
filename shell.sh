@@ -66,6 +66,17 @@ find / -name ".log" -mtime +3 -exec rm fr {} ; find /log ! -mtime -3
 find / -size +50k -size -100K -exec rm -rf {}\:
 # 在 A 文件夹下有多个子文件夹（a1、b1、c1），每个子文件夹下有好几张 jpg 图片，要求写一段代码（用 Python or Shell），把这些图片全部拷贝并存在 B 文件夹下。
 find  ./A/ -maxdepth 2  -name '*.jpg' -exec cp {} ./B \;
+#查找/etc下以.conf结尾的文件并以时间命名打包到/tmp下（两种方法）
+find /etc/ -type f -name '*.conf' -exec tar zcf /tmp/a.tar.gz {} +
+find /etc/ -type f -name '*.conf'|xargs  tar zcf  /tmp/a.tar.gz {} +
+tar zcf /tmp/.a.tar.gz `find /etc/ -type f -name '*.conf'`
+#取出/etc/fstab 权限
+16777282 -rw-r--r--. 1 root root 501 Mar 26 13:52 /etc/fstab
+ll -id /etc/fstab |awk -F'[ .]' '{print $2}'
+find /tmp/ -type f -size +1k -size -10M -mtime -7 |xargs -i cp {} /tmp/
+find /tmp/ -type f -size +1k -size -10M -mtime -7 -exec cp {} /tmp/ \;
+
+
 
 
 7、awk
@@ -76,7 +87,7 @@ awk '{print $1}' nginx.log | grep -v "^$" | sort | uniq -c | sort -nr | head -n 
 # 如何显示文本file.txt中第二大列大于56789的行？
 awk -F "," '{if($2>56789){print $0}}' file.txt
 # 统计所有连接到shell服务器的外部IP数，以ip为准
-netstat -tnp | awk ‘{print $5}’ | awk -F: ‘{print $1}’ | awk ‘{if(NR>2)print}’ | sort | uniq -c |wc -l
+netstat -tnp | awk '{print $5}' | awk -F: '{print $1}' | awk '{if(NR>2)print}' | sort | uniq -c |wc -l
 # 假设qq. tel文件内容:
 12334:13510014336
 12345:12334555666
@@ -107,6 +118,37 @@ http: / /post.baidu. com/2. html
 2 post .baidu. com
 1 mp3. baidu. com
 awk -F/ '{print $3}' yuming.txt | sort -r | uniq -c 
+# 将文件中的oldboy全部替换为oldgirl，同时将49000448改为31333741。
+sed -e 's#oldboy#oldgirl#g;s#49000448#31333741#g' file.txt
+#用awk获取reg.txt文件中第三行的倒数第二列字段
+awk 'NR==3{print $(NF-1)}' reg.txt
+cat reg.txt 
+Zhang   Dandan      41117397    :250:100:175
+Zhang   Xiaoyu      390320151   :155:90:201
+Meng    Feixue      0042789     :250:60:50
+Wu   Waiwai     70271111    :250:80:75
+Liu     Bingbing    41117483    :250:100:175
+Wang  Xiaoai        3515064655 :50:95:135
+# 显示文件reg.txt所有以41开头的ID号码的人的全名和ID号码
+awk  '$3~/^41/{print $1,$2,$3}' reg.txt
+# 显示小雨的姓名与id号
+awk '$2~/Xiaoyu/{print $1,$2,$3}' reg.txt 
+# 显示Xiaoyu的捐款.每个值时都有以520135
+awk '$NF{print $4}' reg.txt |tr ':' '$'
+#计算第一次捐款的总额
+awk -F: '{i=i+$2}END{print i}' reg.txt
+#使用awk计算0加到100
+seq 100|awk '{i=i+$1}END{print i}'
+#调换/etc/passwd 第一列和最后一列内容（至少2种方法）
+awk -F: -vOFS=":" '{u=$1;$1=$NF;$NF=u;print $0}' /etc/passwd
+sed -r 's#(^.*:)(.*)(/.*)#\3 \1#g' /etc/passwd
+#找出/oldboy下面以.txt结尾的文件把里面的oldboy替换为oldgirl(三种方法)
+sed -i 's#oldboy#oldgirl#g' `find /oldboy/ -type f -name '*.txt'`
+awk 'gsub(/oldboy/,"oldgirl"){print $0}' `find /oldboy/ -type f -name '*.txt'`
+grep 'oldboy' `find /oldboy/ -type f -name '*.txt'`|sed 's#oldboy#oldgirl#g'
+
+
+
 
 8、sed
 # 用sed修改test.txt的23行test为tset；
