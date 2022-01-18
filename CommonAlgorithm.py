@@ -240,7 +240,30 @@ def sort_for_10000(alist):
                 if blist[k] < blist[k + 1]:
                     blist[k], blist[k + 1] = blist[k + 1], blist[k]
     return blist[:10]
-
+# 最大k个数	
+class Solution:
+    def findKth(self , a: List[int], n: int, K: int) -> int:
+        # write code here
+        for i in range(K):
+            for j in range(len(a)-1-i):
+                if a[j] > a[j+1]:
+                    a[j+1],a[j] = a[j], a[j+1]
+        return a[n-K]
+		
+# 最小k个数
+class Solution:
+    def GetLeastNumbers_Solution(self , tinput: List[int], k: int) -> List[int]:
+        n = len(tinput)
+        for i in range(k):
+            for j in range(n-1-i):
+                if tinput[j] < tinput[j+1]:
+                    tinput[j+1],tinput[j] = tinput[j], tinput[j+1]
+        return tinput[n-k:n][::-1]
+# 		
+class Solution:
+    def GetLeastNumbers_Solution(self, a, k):
+        import heapq
+        return heapq.nsmallest(k,a)
 
 # 回文
 def huiwen(a):
@@ -397,11 +420,23 @@ def merge_list(list1, list2):
             tmp.append(list2[j])
             j = j + 1
     return tmp + list1[i:] + list2[j:]
-
+# 不使用tmp m,n分别是元素个数
+class Solution:
+    def merge(self , A, m, B, n):
+        # write code here
+        while(m-1>=0 and n-1>=0):
+            if(A[m-1]>=B[n-1]):
+                A[m+n-1] = A[m-1]
+                m = m-1
+            else:
+                A[m+n-1] = B[n-1]
+                n = n-1
+        if n>=1:
+            A[m:m+n] = B[:n]
+        return A
 
 # 一句话解决阶乘函数
 from functools import reduce
-
 
 def fun1(n):
     return reduce(lambda x, y: x * y, range(1, n + 1))
@@ -438,7 +473,7 @@ print(num)
 def fibonacci(n):
     if n == 0 or n == 1:
         return 1
-        return fibonacci(n - 1) + fibonacci(n - 2)
+    return fibonacci(n - 1) + fibonacci(n - 2)
 
 
 class ListNode:
@@ -476,17 +511,46 @@ class Solution:
             res = l2.var
             res.next = mergtowlist(l2.next, l1)
         return res
-
+# 非递归
+class Solution:
+    def Merge(self , pHead1: ListNode, pHead2: ListNode) -> ListNode:
+        # write code here
+        res1 = res = ListNode(0) # res1保留头指针
+        while pHead1 and pHead2:
+            if pHead1.val < pHead2.val:
+                res.next = pHead1
+                pHead1 = pHead1.next
+            else:
+                res.next = pHead2
+                pHead2 = pHead2.next
+            res = res.next
+        if not pHead1:
+            res.next = pHead2
+        if not pHead2:
+            res.next = pHead1
+        return res1.next
 
 # 青蛙跳台阶问题
+# F（n）=F（n-1）+F（n-2）
 class Solution:
     def climbStairs(self,n):
-        if n == 1:
+        if n == 1:  
             return 1
         if n == 2:
             return 2
         return self.climbStairs(n-1) + self.climbStairs(n-2)
 
+# 非递归 更快
+class Solution:
+    def jumpFloor(self , number: int) -> int:
+        a,b = 1,2
+        if number == 1:
+            return 1
+        if number == 2:
+            return 2
+        for _ in range(number-2):
+            a, b = b, a+b 
+        return b
 
 # 字符串相加 返回字符串
 class Solution:
@@ -542,7 +606,7 @@ class Queue:
 class MyQueue:
     def __init__(self):
         self.a = []
-        self.b = []
+        self.b = [] # 实际装数据
 
     def push(self, x: int) -> None:
         while self.b:
@@ -699,6 +763,152 @@ def preorder(tree):
         preorder(tree.getLeftChild())
         preorder(tree.getRightChild())
 
+#快排完整版
+class Solution:
+    def sort1(self, li,lift,right):
+        if right > lift:
+            mid = self.sort2(li,lift,right)
+            self.sort1(li,lift,mid-1)
+            self.sort1(li,mid+1,right)
+			
+    def sort2(self, li,lift,right):
+        tmp = li[lift]
+        while True:
+            while right > lift and li[right] >= tmp:
+                right = right - 1
+            li[lift] = li[right]
+            while right > lift and li[lift] <= tmp:
+                lift = lift + 1
+            li[right] = li[lift]
+            if lift == right:
+                break
+        li[lift] = tmp
+        return lift
+		
+    def MySort(self , arr: List[int]) -> List[int]:
+        # write code here
+        self.sort1(arr,0,len(arr)-1)
+        return arr
+ 
+# 设计LRU缓存结构 函数嵌套函数
+class Solution:
+    def LRU(self , operators , k ):
+        A,a=dict(),[]
+        def set(key,value):
+            if len(a)<k:
+                A[key]=value
+                a.append(key)
+            else:
+                del A[a.pop(0)]
+                A[key]=value
+                a.append(key)
+ 
+        def get(key):
+            if key in A.keys():
+                a.remove(key)
+                a.append(key)
+                return A[key]
+            else: return -1
+ 
+        sol=[]
+        for i in operators:
+            if i[0]==1: set(i[1],i[2])
+            else:
+                sol.append(get(i[1]))
+        return sol
+
+		
+# 实现二叉树先序，中序和后序遍历
+class Solution:
+    def __init__(self):
+        self.firstArr = []
+        self.midArr = []
+        self.lastArr = []
+    def threeOrders(self , root ):
+        # write code here
+        res = []
+        res.append(self.firstSearch(root))
+        res.append(self.midSearch(root))
+        res.append(self.lastSearch(root))
+        return res
+
+    def firstSearch(self, root):
+        if root != None:
+            self.firstArr.append(root.val)
+            self.firstSearch(root.left)
+            self.firstSearch(root.right)
+        return self.firstArr
+ 
+    def midSearch(self, root):
+        if root != None:
+            self.midSearch(root.left)
+            self.midArr.append(root.val)
+            self.midSearch(root.right)
+        return self.midArr
+ 
+    def lastSearch(self, root):
+        if root != None:
+            self.lastSearch(root.left)
+            self.lastSearch(root.right)
+            self.lastArr.append(root.val)
+        return self.lastArr
+
+
+# 树的层序遍历
+class Solution:
+    def __init__(self):
+        self.res = []
+    def levelOrder(self , root: TreeNode) -> List[List[int]]:
+        # write code here
+        if not root:
+            return []
+        self.dfs(1,root)
+        return self.res
+     
+    def dfs(self,index,r):
+        if len(self.res) < index:
+            self.res.append([])
+        self.res[index - 1].append(r.val)
+        if r.left:
+            self.dfs(index + 1, r.left)
+        if r.right:
+            self.dfs(index + 1, r.right)
+			
+# 连续子数组的最大和 动态规划
+class Solution:
+    def FindGreatestSumOfSubArray(self , array: List[int]) -> int:
+        length = len(array)
+        sum_ = 0
+        ret = array[0]
+        for i in range(0,length):
+            sum_ = max(array[i],sum_+array[i])
+            ret = max(ret,sum_)
+        return ret
+		
+# 判断链表中是否有环		
+class Solution:
+    def hasCycle(self , head: ListNode) -> bool:
+        if not head:
+            return False
+        slow,fast= head,head
+        while fast and fast.next:
+            slow = slow.next
+            fast = fast.next.next
+            if slow == fast:
+                return True
+        return False
+		
+# 链表中环的入口结点
+class Solution:
+    def EntryNodeOfLoop(self, pHead):
+        s = set()
+        while pHead:
+            if pHead in s:
+                return pHead
+            s.add(pHead)
+            pHead = pHead.next
+        return None	
+		
 if __name__ == '__main__':
     # print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))
     # print(sercher_dichotomy([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10))
