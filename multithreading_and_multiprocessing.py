@@ -195,3 +195,59 @@ if __name__ == '__main__':
         obj = t.submit(data_check, i)
 
     t.shutdown(wait=True)
+
+
+#############################
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import pymysql
+import sys
+
+domestic_friend_IP = '127.0.0.0.1'
+domestic_friend_port = 3306
+domestic_user = 'root'
+domestic_password = '123456'
+domestic_db = 'test'
+
+PROCE_NUM = 10
+args = sys.argv
+
+t_watch_friend_sql = ["drop table if exists test.t_watch_friend_{0};",
+                      "create table test.t_watch_friend_{0} like t_watch_friend_{0};",
+                      "insert into test.t_watch_friend_{0} SELECT t1.* FROM t_watch_friend_{0} t1 join test.tmp_out_watch t2 where t1.watch_id = t2.watch_id;",
+                      "insert ignore into test.t_watch_friend_{0} SELECT t1.* FROM t_watch_friend_{0} t1 join test.tmp_out_watch t2 where t1.friend_id = t2.watch_id;"]
+
+
+def exec_sql(n, sql):
+    try:
+        the_connection = pymysql.connect(host=domestic_friend_IP, user=domestic_user, password=domestic_password,
+                                         database=domestic_db,
+                                         port=domestic_friend_port)
+        cursor = the_connection.cursor(pymysql.cursors.DictCursor)
+        for sql_row in sql:
+            cursor.execute(sql_row.format(n))
+        the_connection.commit()
+        print("{0} {1} complete".format(str(sql).format(n), n))
+        cursor.close()
+        the_connection.close()
+        return True
+    except Exception as e:
+        print("{0} {1} failed".format(str(sql).format(n), n))
+        cursor.close()
+        the_connection.close()
+        return False
+
+
+if __name__ == '__main__':
+    action = sys.argv[1]
+    if action == 't_watch_friend':
+        obj_list = []
+        t = ThreadPoolExecutor(PROCE_NUM)
+        for i in range(300):
+            try:
+                obj = t.submit(exec_sql, i, t_watch_friend_sql)
+                obj_list.append(obj)
+            except Exception as e:
+                print(e)
+    for future in as_completed(obj_list):
+        if not future.result():
+            exit(1)
