@@ -48,7 +48,7 @@ find . -size +100K xargs -I {} mv {} /tmp
 #  找出access.log中访问top 10的ip地址
 find / -name ".log" -mtime +3 -exec rm fr {} ; find /log ! -mtime -3
 # 找出系统内大于50k，小于100k的文件，并删除它们
-find / -size +50k -size -100K -exec rm -rf {}\:
+find / -size +50k -size -100K -exec rm -rf {}\;
 # 在 A 文件夹下有多个子文件夹（a1、b1、c1），每个子文件夹下有好几张 jpg 图片，要求写一段代码（用 Python or Shell），把这些图片全部拷贝并存在 B 文件夹下。
 find  ./A/ -maxdepth 2  -name '*.jpg' -exec cp {} ./B \;
 #查找/etc下以.conf结尾的文件并以时间命名打包到/tmp下（两种方法）
@@ -159,9 +159,9 @@ xiaofang f 99
 # 用sed修改test.txt的23行test为tset；
 sed –i '23s/test/tset/g' test.txt
 # 查看/web.log第25行第三列的内容
-sed –n '25p' /web.log | cut –d “ ” –f3
-head –n25 /web.log | tail –n1 | cut –d “ ” –f3
-awk –F “ ” ‘NR==23{print $3}’ /web.log
+sed –n '25p' /web.log | cut –d " " –f3
+head –n25 /web.log | tail –n1 | cut –d " " –f3
+awk –F "" 'NR==23{print $3}' /web.log
 # 显示file.txt的1,3,5,7,10,15行
 sed -n "1p;3p;5p;7p;10p;15p" file.txt
 awk 'NR==1||NR==3||NR==5||…||NR=15{print $0}' file.txt
@@ -284,8 +284,7 @@ END{
      print v,a[v]
     }
 
-}
-' nowcoder.txt | sort -n -k2
+}' nowcoder.txt | sort -n -k2
 # 第二列是否有重复
 #!/bin/bash
 awk '

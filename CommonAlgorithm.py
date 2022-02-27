@@ -87,7 +87,7 @@ def select_sort(alist):
     for i in range(0, len(alist)):
         min_index = i
         for j in range(i + 1, len(alist)):
-            if alist[j] < alist[i]:
+            if alist[j] < alist[min_index]:
                 min_index = j
         alist[min_index], alist[i] = alist[i], alist[min_index]
     return alist
@@ -248,7 +248,7 @@ class Solution:
             for j in range(len(a)-1-i):
                 if a[j] > a[j+1]:
                     a[j+1],a[j] = a[j], a[j+1]
-        return a[n-K]
+        return a[n-k:n][::-1]
 		
 # 最小k个数
 class Solution:
@@ -420,6 +420,7 @@ def merge_list(list1, list2):
             tmp.append(list2[j])
             j = j + 1
     return tmp + list1[i:] + list2[j:]
+
 # 不使用tmp m,n分别是元素个数
 class Solution:
     def merge(self , A, m, B, n):
@@ -490,7 +491,7 @@ class Solution:
             pre = cur       # pre 暂存 cur
             cur = tmp       # cur 访问下一节点
         return pre
-link = Node(1,Node(2,Node(3,Node(4,Node(5,Node(6,Node7,Node(8.Node(9))))))))
+link = Node(1,Node(2,Node(3,Node(4,Node(5,Node(6,Node7,Node(8,Node(9))))))))
 root = reverseList(link)
 while root: 
     print(roo.data)
@@ -696,7 +697,7 @@ class UnorderList:
             if current.getData() == x:
                 found = True
             else:
-                current = current.getNext
+                current = current.getNext()
         return found
 
     def remove(self, x):
@@ -884,7 +885,6 @@ class Solution:
             sum_ = max(array[i],sum_+array[i])
             ret = max(ret,sum_)
         return ret
-		
 # 判断链表中是否有环		
 class Solution:
     def hasCycle(self , head: ListNode) -> bool:
@@ -909,6 +909,381 @@ class Solution:
             pHead = pHead.next
         return None	
 		
+# 输入一个长度为 n 的链表，设链表中的元素的值为 ai ，返回该链表中倒数第k个节点。
+class Solution:
+    def FindKthToTail(self , pHead: ListNode, k: int) -> ListNode:
+        # write code here
+        listK = []
+        if k <1:
+            return None
+        while pHead:
+            listK.append(pHead)
+            if len(listK) > k:
+                listK.pop(0)
+            pHead = pHead.next
+        if len(listK) < k:
+            return None
+        else: 
+            return listK[0]
+#2 双指针解法
+class Solution:
+    def FindKthToTail(self , pHead , k ):
+        first, second = pHead, pHead
+        for i in range(k):
+            if first == None:
+                return None
+            first = first.next
+        while first:
+            first = first.next
+            second = second.next
+        return second			
+		
+# 输入两个无环的单向链表，找出它们的第一个公共结点
+class Solution:
+    def FindFirstCommonNode(self , pHead1 , pHead2 ):
+        setA = set()
+        if pHead1 is None and pHead2 is None:
+            return None
+        while pHead1:
+            setA.add(pHead1)
+            pHead1 = pHead1.next
+        while pHead2:
+            if pHead2 in setA:
+                return pHead2
+            pHead2 = pHead2.next
+        return None
+		
+# 2双指针解法
+class Solution:
+    def FindFirstCommonNode(self , pHead1 , pHead2 ):
+        if pHead1 is None or pHead2 is None:
+            return None
+        p1, p2 = pHead1, pHead2 
+        while p1 != p2:
+            if p1:
+                p1 = p1.next          
+            else:
+                p1 = pHead2
+            if p2:
+                p2 = p2.next
+            else:
+                p2 = pHead1
+        return p1     
+# 给定一个节点数为n的无序单链表，对其按升序排序。
+class Solution:
+    def sortInList(self , head):
+        h = head
+        l = []
+        while h:
+            l.append(h.val)
+            h = h.next
+        l.sort() 
+        h = head
+        i = 0      
+        while h:
+            h.val = l[i]
+            h = h.next
+            i += 1
+        return head		
+# 给定一个链表，请判断该链表是否为回文结构。
+class Solution:
+    def isPalindrome(self, head) -> bool:
+        #链表为空，直接返回true
+        if head is None:
+            return True
+ 
+        #找到链表的中点
+        middle_point = self.middle_point(head)
+        second_start = self.reverse_list(middle_point.next)
+ 
+        #判断前半部分和后半部分是否相等
+        result = True
+        first = head
+        second = second_start
+        while result and second is not None:
+            if first.val != second.val:
+                result = False
+            first = first.next
+            second = second.next
+ 
+        #还原链表并返回结果
+        middle_point.next = self.reverse_list(second_start)
+        return result
+ 
+    #快慢指针寻找中点
+    def middle_point(self, head):
+        fast = head
+        slow = head
+        while fast.next is not None and fast.next.next is not None:
+            fast = fast.next.next
+            slow = slow.next
+        return slow
+ 
+    #翻转链表
+    def reverse_list(self, head):
+        cur, pre = head, None
+        while cur:
+            tmp = cur.next  # 暂存后继节点 cur.next
+            cur.next = pre  # 修改 next 引用指向
+            pre = cur       # pre 暂存 cur
+            cur = tmp       # cur 访问下一节点
+        return pre
+		
+# 删除给出链表中的重复元素（链表中元素从小到大有序），使链表中的所有元素都只出现一次
+class Solution:
+    def deleteDuplicates(self , head: ListNode) -> ListNode:
+        cur = head
+        if cur is None:
+            return None
+        while cur.next:
+            if cur.val == cur.next.val:
+                cur.next = cur.next.next
+            else:
+                cur = cur.next
+        return head
+# 给出一个升序排序的链表，删除链表中的所有重复出现的元素，只保留原链表中只出现一次的元素。
+class Solution:
+    def deleteDuplicates(self, head):
+        if not head:
+            return head
+        dummy = ListNode(0)
+        dummy.next=head
+
+        cur = dummy
+        while cur.next and cur.next.next:
+            if cur.next.val == cur.next.next.val:
+                data = cur.next.val
+                while cur.next and cur.next.val == data:
+                    cur.next = cur.next.next
+            else:
+                cur = cur.next
+        return dummy.next
+#旋转数组的最小数字
+class Solution:
+    def minNumberInRotateArray(self , rotateArray: List[int]) -> int:
+        left = 0
+        right = len(rotateArray)-1
+        while left < right:
+            mid = (left+right)//2
+            if rotateArray[mid] > rotateArray[right]:
+                left = mid + 1
+            elif rotateArray[mid] < rotateArray[right]:
+                right = mid
+            else:
+                right -= 1
+        return rotateArray[left]
+        # write code here
+		
+# 二维数组中的查找
+class Solution:
+    def Find(self , target: int, array: List[List[int]]) -> bool:
+        rows = len(array)
+        nums = len(array[0])
+        if rows == 0:
+            return False
+        lift ,down = rows -1, 0
+        while lift >=0 and down <= nums -1:
+            if array[lift][down] == target:
+                return True
+            elif array[lift][down] > target:
+                lift = lift - 1
+            else:
+                down = down + 1
+        return False
+# 寻找峰值
+class Solution:
+    def findPeakElement(self , nums: List[int]) -> int:
+        lennums = len(nums)
+        if max(nums) == nums[0]:
+            return 0
+        if max(nums) == nums[lennums -1]:
+            return lennums -1
+        for i in range(1,lennums):
+            if nums[i] > nums[i-1] and nums[i] > nums[i+1]:
+                return i
+# 前序遍历
+class Solution:
+    def __init__(self):
+        self.array = []
+    def preorderTraversal(self , root: TreeNode) -> List[int]:
+        if root:
+            self.array.append(root.val)
+            self.preorderTraversal(root.left)
+            self.preorderTraversal(root.right)
+        return self.array
+# 二叉树的最大深度
+class Solution:
+    def maxDepth(self , root: TreeNode) -> int:
+        if root is None:
+            return 0
+        if root.left is None and root.right is None:
+            return 1
+        l = self.maxDepth(root.left)
+        r = self.maxDepth(root.right)
+        return l+1 if l > r else r+1
+
+# 二叉树中和为某一值的路径(一)
+class Solution:
+    def hasPathSum(self , root: TreeNode, sum: int) -> bool:
+        if root is None:
+            return False
+        if root.right is None and root.left is None and root.val==sum:
+            return True
+        return self.hasPathSum(root.left,sum-root.val) or self.hasPathSum(root.right,sum-root.val)
+		
+# 二叉搜索树与双向链表
+# 先中序遍历，将所有的节点保存到一个列表中。对这个list[:-1]进行遍历，
+# 每个节点的right设为下一个节点，下一个节点的left设为上一个节点。
+class Solution:
+    def Convert(self , pRootOfTree ):
+        # write code here
+        if not pRootOfTree: return None
+        self.arr = []
+        self.midTraversal(pRootOfTree)
+        for i,v in enumerate(self.arr[:-1]):
+            v.right = self.arr[i+1]
+            self.arr[i+1].left = v
+        return self.arr[0]
+    def midTraversal(self,root):
+        if not root: return
+        self.midTraversal(root.left)
+        self.arr.append(root)
+        self.midTraversal(root.right)
+# 对称的二叉树
+class Solution:
+    def isBanceTree(self,leftTree,rightTree):
+        if leftTree == None and rightTree == None:
+            return True
+        elif leftTree != None and rightTree == None:
+            return False
+        elif leftTree == None and rightTree != None:
+            return False
+        elif leftTree.val != rightTree.val:
+            return False
+        else:
+            return self.isBanceTree(leftTree.left, rightTree.right) and self.isBanceTree(leftTree.right, rightTree.left)
+    def isSymmetrical(self , pRoot: TreeNode) -> bool:
+        # write code here
+        if pRoot == None:
+            return True
+        return self.isBanceTree(pRoot.left, pRoot.right)
+		
+# 判断是不是平衡二叉树
+class Solution:
+    def deep(self,pRoot):
+        if not pRoot:
+            return 0
+        L=self.deep(pRoot.left)
+        R=self.deep(pRoot.right)
+        return max(L,R)+1
+    def IsBalanced_Solution(self, pRoot):
+        # write code here
+        if not pRoot:
+            return True
+        L=self.deep(pRoot.left)
+        R=self.deep(pRoot.right)
+        if abs(L-R)>1:
+            return False
+        else:
+            return self.IsBalanced_Solution(pRoot.left) and self.IsBalanced_Solution(pRoot.right)
+# 合并二叉树
+class Solution:
+    def mergeTrees(self , t1: TreeNode, t2: TreeNode) -> TreeNode:
+        if t1 is None:
+            return t2
+        if t2 is None:
+            return t1
+        t1.val = t1.val + t2.val
+        t1.left = mergeTrees(t1.left,t2.left)
+        t1.right = mergeTrees(t1.right,t2.right)
+        return t1
+# 二叉树的镜像
+class Solution:
+    def Mirror(self , pRoot: TreeNode) -> TreeNode:
+        if pRoot is None:
+            return None
+        pRoot.left ,pRoot.right = pRoot.right,pRoot.left
+        
+        pRoot.left = self.Mirror(pRoot.left)
+        pRoot.right = self.Mirror(pRoot.right)
+        return pRoot
+# 判断是不是二叉搜索树
+class Solution:
+    def isValidBST(self , root: TreeNode) -> bool:
+        if root is None:
+            return None
+        if root.left is None and root.right is None:
+            return True
+        if root.left and root.right:
+            if root.left.val < root.val and root.right.val > root.val:
+                return True
+            else:
+                return False
+        if root.left is None and root.right:   
+            if root.right.val > root.val:
+                return True
+            else:
+                return False
+        if root.left and root.right is None:
+            if root.left.val < root.val:
+                return True
+            else:
+                return False
+        return self.isValidBST(root.left) and self.isValidBST(root.right)
+# 判断是不是完全二叉树
+class Solution:
+    def isCompleteTree(self , root: TreeNode) -> bool:
+        # write code here
+        if not root:
+            return True
+        listT = [root]
+        index = 0
+        while index < len(listT):
+            if listT[index] is not None:
+                listT.append(listT[index].left)
+                listT.append(listT[index].right)
+            index +=1
+        while listT[-1] is None:
+            listT.pop()
+        for q in listT:
+            if q is None:
+                return False
+        return True
+		
+# 重建二叉树
+class Solution:
+    def reConstructBinaryTree(self , pre: List[int], vin: List[int]) -> TreeNode:
+      # write code here
+      if not pre or not vin:
+          return None
+      if len(pre) == 1:
+          return TreeNode(pre[0])
+ 
+      # 前序遍历的第一个元素是根节点
+      root_val = pre[0]
+      root = TreeNode(root_val)
+      # 从中序遍历中找到根节点位置
+      root_idx = vin.index(root_val)
+      # 根节点左侧元素为左子树，右侧元素为右子树
+      left_num = root_idx
+      right_num = len(vin) - root_idx - 1
+      # 递归构建左右子树
+      root.left = self.reConstructBinaryTree(pre[1: left_num + 1], vin[:root_idx])
+      root.right = self.reConstructBinaryTree(pre[-right_num:], vin[root_idx+1:])
+#最长公共前缀
+class Solution:
+    def longestCommonPrefix(self , strs ):
+        # write code here
+        if len(strs)==0 or strs=="":
+            return ""
+        pre = strs[0]
+        i=1
+        while i<len(strs):
+            while pre != strs[i][:len(pre)]:
+                pre = pre[:(len(pre)-1)]
+            i+=1
+        return pre
+
 if __name__ == '__main__':
     # print(sercher_sequence([1, 3, 4, 3, 2, 4, ], 3))
     # print(sercher_dichotomy([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 10))
